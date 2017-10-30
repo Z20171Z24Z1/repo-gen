@@ -10,23 +10,22 @@ var app = express();
 import express from 'express';
 import path from 'path';
 import open from 'open';
-import webpack from 'webpack';
-import config from '../webpack.config.dev';
+import compression from 'compression';
+// Dont need references to webpack
+// This is just for production testing not for production deployment
 
 const port = 3000;
 const app = express();
-const compiler = webpack(config);
+
+app.use(compression());
+app.use(express.static('dist'));
 
 /* eslint-disable no-console */
-app.use(require('webpack-dev-middleware')(compiler, {
-    noInfo:true,
-    publicPath:config.output.publicPath
-}));
-
 app.get('/', function (req, res) {
-    res.sendFile(path.join(__dirname, '../src/index.html'));
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
+/* Server from heroku now
 app.get('/users', function(req, res){
     res.json([
         {"id":1,"firstName":"Bob", lastName:"Smith", email:"bob.smith@gmail.com"},
@@ -34,6 +33,7 @@ app.get('/users', function(req, res){
         {"id":3,"firstName":"Tom", lastName:"Jones", email:"tom.jones@gmail.com"}
     ]);
 });
+*/
 
 app.listen(port, function(err){
     if(err) {
